@@ -6,7 +6,7 @@
 		unsigned char r, g, b;
 	} channels_3;
 
-	// Structure for the image with only one colour channel
+	// Structure for the image with either one channel or three channels
 	typedef struct {
 		int height, width, thresh;
 		char format[3];
