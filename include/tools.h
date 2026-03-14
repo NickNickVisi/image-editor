@@ -1,8 +1,6 @@
 #ifndef __tools_functions__
     #define __tools_functions__
-#endif
-#include <stdio.h>
-#include <stdlib.h>
+
 #include "io.h"
 #include "image.h"
 
@@ -35,3 +33,5 @@ void select_all(selection *sel, image *img);
 void free_sel(selection *sel);
 
 void deallocate(image *img);
+
+#endif

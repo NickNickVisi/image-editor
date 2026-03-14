@@ -378,18 +378,16 @@ void select_all(selection *sel, image *img)
 // Frees the coordinate selection
 void free_sel(selection *sel)
 {
-	if (!sel) {
+	if (!sel)
 		return;
-	}
 	free(sel);
 }
 
 // Prints the histogram of the image
 void histogram(char *command, image *img)
 {
-	if (check_img(img) == 0) {
+	if (check_img(img) == 0)
 		return;
-	}
 	int x, y, z;
 	char aux_buffer[256] = {0}, count;
 
@@ -416,17 +414,16 @@ void histogram(char *command, image *img)
 		}
 	}
 	max = 1;
-	for (int i = 0; i < y; i++) {
-		if (hist[i] > max) {
+	for (int i = 0; i < y; i++)
+		if (hist[i] > max)
 			max = hist[i];
-		}
-	}
+
 	for (int i = 0; i < y; i++) {
 		int stars = hist[i] * x / max;
+
 		printf("%d\t|\t", stars);
-		for (int j = 0; j < stars; j++) {
+		for (int j = 0; j < stars; j++)
 			printf("*");
-		}
 		printf("\n");
 	}
 }
@@ -434,31 +431,30 @@ void histogram(char *command, image *img)
 // Equalizes the image
 void equalize(image *img)
 {
-	if (check_img(img) == 0) {
+	if (check_img(img) == 0)
 		return;
-	}
+
 	if (img->format[1] == '3' || img->format[1] == '6') {
 		printf("Black and white image needed\n");
 		return;
 	}
+
 	int area = img->height * img->width;
 	// Number of appearances and the sum of previous appearances
 	int hist[256] = {0}, sum[256] = {0};
 	int i, j;
 
-	for (i = 0; i < img->height; i++) {
-		for (j = 0; j < img->width; j++) {
+	for (i = 0; i < img->height; i++)
+		for (j = 0; j < img->width; j++)
 			hist[img->matrix1[i][j]]++;
-		}
-	}
-	for (int i = 0; i < 256; i++) {
-		for (int j = 0; j <= i; j++) {
+
+	for (int i = 0; i < 256; i++)
+		for (int j = 0; j <= i; j++)
 			sum[i] += hist[j];
-		}
-	}
+
 	float newpixel;
 
-	for (i = 0; i < img->height; i++) {
+	for (i = 0; i < img->height; i++)
 		for (j = 0; j < img->width; j++) {
 			newpixel = (float)(sum[img->matrix1[i][j]] * 255.0 / area);
 			newpixel = clamp2(newpixel, 0, 255);
@@ -466,6 +462,5 @@ void equalize(image *img)
 			// the clamp2 function
 			img->matrix1[i][j] = newpixel;
 		}
-	}
 	printf("Equalize done\n");
 }

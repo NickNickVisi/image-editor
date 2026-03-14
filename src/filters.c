@@ -1,21 +1,21 @@
 #include "../include/filters.h"
 
 // Chooses what type of filter should be applied
-char apply_type(char *parameter)
+int apply_type(char *parameter)
 {
 	if (strcmp(parameter, "EDGE") == 0) {
-		return 'a';
+		return 1;
 	}
 	if (strcmp(parameter, "SHARPEN") == 0) {
-		return 'b';
+		return 2;
 	}
 	if (strcmp(parameter, "BLUR") == 0) {
-		return 'c';
+		return 3;
 	}
 	if (strcmp(parameter, "GAUSSIAN_BLUR") == 0) {
-		return 'd';
+		return 4;
 	}
-	return 'e';
+	return 5;
 }
 
 // Sets the value to min or max if it is outside the interval
@@ -102,11 +102,9 @@ void sharpen(image *img, selection *sel)
 			}
 		}
 	}
-	for (i = sel->y1; i < sel->y2; i++) {
-		for (j = sel->x1; j < sel->x2; j++) {
+	for (i = sel->y1; i < sel->y2; i++)
+		for (j = sel->x1; j < sel->x2; j++)
 			img->matrix3[i][j] = new_matrix[i][j];
-		}
-	}
 	dealloc_matrix3(new_matrix, img->height);
 }
 
@@ -118,11 +116,11 @@ void box_blur(image *img, selection *sel)
 	int i, j, k, l, sumr, sumg, sumb;
 	int width = img->width, height = img->height;
 
-	for (i = sel->y1; i < sel->y2; i++) {
+	for (i = sel->y1; i < sel->y2; i++)
 		for (j = sel->x1; j < sel->x2; j++) {
-			if (i == 0 || j == 0 || i == height - 1 || j == width - 1) {
+			if (i == 0 || j == 0 || i == height - 1 || j == width - 1)
 				new_matrix[i][j] = img->matrix3[i][j];
-			} else {
+			else {
 				sumr = 0;
 				sumg = 0;
 				sumb = 0;
@@ -141,12 +139,11 @@ void box_blur(image *img, selection *sel)
 				new_matrix[i][j].b = clamp(sumb / 9, 0, 255);
 			}
 		}
-	}
-	for (i = sel->y1; i < sel->y2; i++) {
-		for (j = sel->x1; j < sel->x2; j++) {
+
+	for (i = sel->y1; i < sel->y2; i++)
+		for (j = sel->x1; j < sel->x2; j++)
 			img->matrix3[i][j] = new_matrix[i][j];
-		}
-	}
+
 	dealloc_matrix3(new_matrix, img->height);
 }
 
@@ -158,11 +155,11 @@ void gaussian_blur(image *img, selection *sel)
 	int i, j, k, l, sumr, sumg, sumb;
 	int width = img->width, height = img->height;
 
-	for (i = sel->y1; i < sel->y2; i++) {
+	for (i = sel->y1; i < sel->y2; i++)
 		for (j = sel->x1; j < sel->x2; j++) {
-			if (i == 0 || j == 0 || i == height - 1 || j == width - 1) {
+			if (i == 0 || j == 0 || i == height - 1 || j == width - 1)
 				new_matrix[i][j] = img->matrix3[i][j];
-			} else {
+			else {
 				sumr = 0;
 				sumg = 0;
 				sumb = 0;
@@ -181,21 +178,20 @@ void gaussian_blur(image *img, selection *sel)
 				new_matrix[i][j].b = clamp(sumb / 16, 0, 255);
 			}
 		}
-	}
-	for (i = sel->y1; i < sel->y2; i++) {
-		for (j = sel->x1; j < sel->x2; j++) {
+
+	for (i = sel->y1; i < sel->y2; i++)
+		for (j = sel->x1; j < sel->x2; j++)
 			img->matrix3[i][j] = new_matrix[i][j];
-		}
-	}
+
 	dealloc_matrix3(new_matrix, img->height);
 }
 
 // Applies the aforementioned filters to the image
 void apply(image *img, char *command, selection *sel)
 {
-	if (check_img(img) == 0) {
+	if (check_img(img) == 0)
 		return;
-	}
+
 	char parameter[30];
 
 	if (sscanf(command, "APPLY %s", parameter) != 1) {
@@ -206,29 +202,28 @@ void apply(image *img, char *command, selection *sel)
 		printf("Can only apply image filters to coloured images.\n");
 		return;
 	}
-	char type = apply_type(parameter);
+	int type = apply_type(parameter);
 
 	switch (type) {
-		case 'a': {
+		case 1:
 			edge(img, sel);
 			break;
-		}
-		case 'b': {
+
+		case 2:
 			sharpen(img, sel);
 			break;
-		}
-		case 'c': {
+
+		case 3:
 			box_blur(img, sel);
 			break;
-		}
-		case 'd': {
+
+		case 4:
 			gaussian_blur(img, sel);
 			break;
-		}
-		case 'e': {
+
+		case 5:
 			printf("APPLY parameter invalid\n");
 			return;
-		}
 	}
 	printf("APPLY %s done\n", parameter);
 }
